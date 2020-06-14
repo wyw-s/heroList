@@ -1,6 +1,22 @@
 const express = require('express')
 const connection = require('../utils/mysql')
 const router = express.Router()
+// 文件上传
+const multer = require('multer')
+
+// 自定义上传储存位置
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads')
+  },
+  filename: function (req, file, cb) {
+    // 获取文件后缀
+    const fileFormat = file.originalname.split('.')
+    // 设置文件名
+    cb(null, file.fieldname + '-' + Date.now() + '.' + fileFormat[fileFormat.length - 1])
+  }
+})
+const upload = multer({ storage: storage })
 
 /**
  * 设计路由；
@@ -8,24 +24,108 @@ const router = express.Router()
 // 查询英雄列表
 router.get('/list', (request, response) => {
   // 'SELECT * FROM hero' 查询表 hero的全部内容
-  connection.query('SELECT * FROM hero', function(err, rows) {
+  // 'SELECT * FROM hero ORDER BY Id asc/desc' 正序/倒序查询
+  connection.query('SELECT * FROM hero ORDER BY Id desc', function(err, rows) {
+    if (!err) {
+      response.send({
+        code: 200,
+        success: true,
+        data: rows
+      })
+    } else {
+      response.send({
+        code: 500,
+        success: false,
+        message: '获取数据失败'
+      })
+    }
+  });
+})
+
+// 查询英雄详情
+router.get('/detail', (request, response) => {
+  // 'select id from hero where id' 查询表中某个字段的全部内容。
+  // 'select * from hero where id = ' 根据id 进行精确查询。
+  connection.query('select * from hero where id = ?',request.query.id, function(err, rows) {
     if (err) throw err
-    response.send(rows)
+    response.send({
+      code: 200,
+      success: true,
+      data: rows[0] || null
+    })
   });
 })
 
 // 新增英雄；
-router.post('/add', (request, response) => {
+router.post('/add', upload.single('img'), (request, response) => {
+  if (request.file) {
+    request.body.img = request.file.filename
+  }
   // 向表中插入一条数据；
   const sql = "INSERT INTO hero set ?";
   connection.query(sql, request.body, function(err) {
-    if (err) {
-      console.log('新增英雄失败！')
-    } else {
+    if (!err) {
       response.send({
         success: true,
         code: 200,
-        message: '新增英雄成功'
+        message: '恭喜你新增成功'
+      })
+    } else {
+      response.send({
+        code: 500,
+        success: false,
+        message: '新增英雄失败'
+      })
+    }
+  });
+})
+
+// 删除英雄；
+router.delete('/delete', (request, response) => {
+  // 根据id删除某一条数据；
+  const sql = "DELETE FROM hero WHERE id = ?";
+  connection.query(sql, request.body.id, function(err) {
+    if (!err) {
+      response.send({
+        success: true,
+        code: 200,
+        message: '删除成功'
+      })
+    } else {
+      response.send({
+        code: 500,
+        success: false,
+        message: '删除失败'
+      })
+    }
+  });
+})
+
+// 编辑英雄；
+router.put('/updata',upload.single('img'), (request, response) => {
+  if (request.file) {
+    request.body.img = request.file.filename
+  }
+  const body = request.body
+  const arr = []
+  for (let Key in body) {
+    arr.push(body[Key])
+  }
+  arr.push(...arr.splice(0, 1))
+  // 根据id修改某一条数据；
+  const sql = "update hero set name = ?, skill = ?, img = ? where id = ?";
+  connection.query(sql, arr, function(err) {
+    if (!err) {
+      response.send({
+        success: true,
+        code: 200,
+        message: '编辑成功'
+      })
+    } else {
+      response.send({
+        code: 500,
+        success: false,
+        message: '编辑失败'
       })
     }
   });
