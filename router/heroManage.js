@@ -22,10 +22,10 @@ const upload = multer({ storage: storage })
  * 设计路由；
  */
 // 查询英雄列表
-router.get('/list', (request, response) => {
-  // 'SELECT * FROM hero' 查询表 hero的全部内容
-  // 'SELECT * FROM hero ORDER BY Id asc/desc' 正序/倒序查询
-  connection.query('SELECT * FROM hero ORDER BY Id desc', function(err, rows) {
+router.get('/getlist', (request, response) => {
+  // 'SELECT * FROM heros' 查询表 heros的全部内容
+  // 'SELECT * FROM heros ORDER BY Id asc/desc' 正序/倒序查询
+  connection.query('SELECT * FROM heros ORDER BY Id desc', function(err, rows) {
     if (!err) {
       response.send({
         code: 200,
@@ -44,9 +44,9 @@ router.get('/list', (request, response) => {
 
 // 查询英雄详情
 router.get('/detail', (request, response) => {
-  // 'select id from hero where id' 查询表中某个字段的全部内容。
-  // 'select * from hero where id = ' 根据id 进行精确查询。
-  connection.query('select * from hero where id = ?',request.query.id, function(err, rows) {
+  // 'select id from heros where id' 查询表中某个字段的全部内容。
+  // 'select * from heros where id = ' 根据id 进行精确查询。
+  connection.query('select * from heros where id = ?',request.query.id, function(err, rows) {
     if (err) throw err
     response.send({
       code: 200,
@@ -62,7 +62,7 @@ router.post('/add', upload.single('img'), (request, response) => {
     request.body.img = request.file.filename
   }
   // 向表中插入一条数据；
-  const sql = "INSERT INTO hero set ?";
+  const sql = "INSERT INTO heros set ?";
   connection.query(sql, request.body, function(err) {
     if (!err) {
       response.send({
@@ -83,7 +83,7 @@ router.post('/add', upload.single('img'), (request, response) => {
 // 删除英雄；
 router.delete('/delete', (request, response) => {
   // 根据id删除某一条数据；
-  const sql = "DELETE FROM hero WHERE id = ?";
+  const sql = "DELETE FROM heros WHERE id = ?";
   connection.query(sql, request.body.id, function(err) {
     if (!err) {
       response.send({
@@ -113,7 +113,7 @@ router.put('/updata',upload.single('img'), (request, response) => {
   }
   arr.push(...arr.splice(0, 1))
   // 根据id修改某一条数据；
-  const sql = "update hero set name = ?, skill = ?, img = ? where id = ?";
+  const sql = "update heros set name = ?, skill = ?, img = ? where id = ?";
   connection.query(sql, arr, function(err) {
     if (!err) {
       response.send({

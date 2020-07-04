@@ -9,6 +9,12 @@ app.use(bodyParser.json())
 // 解析 application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: false}));
 
+// 设置允许跨域
+app.use((request, response, next) => {
+  response.header('Access-Control-Allow-Origin', "*")
+  next()
+})
+
 // 加载接口；
 app.use('/hero', require('./router/heroManage.js'))
 
