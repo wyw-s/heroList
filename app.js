@@ -4,6 +4,8 @@ const bodyParser = require('body-parser')
 // 创建服务器；
 const app = express()
 
+// 托管静态资源；
+app.use(express.static('uploads'))
 // 解析 application/json
 app.use(bodyParser.json())
 // 解析 application/x-www-form-urlencoded
