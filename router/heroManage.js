@@ -30,7 +30,7 @@ router.get('/getlist', (request, response) => {
       response.send({
         code: 200,
         success: true,
-        data: rows
+        heroList: rows
       })
     } else {
       response.send({
@@ -57,13 +57,18 @@ router.get('/detail', (request, response) => {
 })
 
 // 新增英雄；
-router.post('/add', upload.single('img'), (request, response) => {
+router.post('/add', upload.single('images'), (request, response) => {
+  let params;
   if (request.file) {
-    request.body.img = request.file.filename
+    params = {
+      images: request.file.filename,
+      date: new Date().toLocaleString(),
+      ...request.body
+    }
   }
   // 向表中插入一条数据；
   const sql = "INSERT INTO heros set ?";
-  connection.query(sql, request.body, function(err) {
+  connection.query(sql, params, function(err) {
     if (!err) {
       response.send({
         success: true,
