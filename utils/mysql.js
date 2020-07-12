@@ -5,7 +5,7 @@ var connection = mysql.createConnection({
   host: 'localhost', // 数据库地址
   port: '3306',
   user: 'root',
-  password: 'root',
+  password: 'WANGyawei@520',
   database: 'heroList' // 数据库名称
 })
 
