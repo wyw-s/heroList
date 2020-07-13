@@ -61,7 +61,7 @@ router.post('/add', upload.single('images'), (request, response) => {
   let params;
   if (request.file) {
     params = {
-      images: request.file.filename,
+      images: 'http://47.114.139.71' + request.file.filename,
       date: new Date().toLocaleString(),
       ...request.body
     }
