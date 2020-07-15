@@ -3,7 +3,7 @@ const connection = require('../utils/mysql')
 const router = express.Router()
 // 文件上传
 const multer = require('multer')
-
+const baseUrl = process.env.NODE_ENV === 'production' ? 'http://47.114.139.71:3000/' : 'http://localhost:3000/'
 // 自定义上传储存位置
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -61,7 +61,7 @@ router.post('/add', upload.single('images'), (request, response) => {
   let params;
   if (request.file) {
     params = {
-      images: 'http://47.114.139.71:3000/' + request.file.filename,
+      images: baseUrl + request.file.filename,
       date: new Date().toLocaleString(),
       ...request.body
     }
