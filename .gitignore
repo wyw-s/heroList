@@ -2,6 +2,8 @@ node_modules
 
 /.idea
 
+# 忽略 uploads 文件夹下的所有文件
 uploads/*
 
+# 除了 uploads/.gitkeep 文件不忽略
 !uploads/.gitkeep
