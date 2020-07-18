@@ -7,7 +7,7 @@ const baseUrl = process.env.NODE_ENV === 'production' ? 'http://47.114.139.71:30
 // 自定义上传储存位置
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads')
+    cb(null, './uploads')
   },
   filename: function (req, file, cb) {
     // 获取文件后缀
