@@ -6,9 +6,9 @@ const router = express.Router()
 router.post('/login', (request, response) => {
   console.log('====0000====')
   response.send({
-    code: 500,
+    code: 200,
     success: true,
-    message: '登录失败'
+    message: '登录成功'
   })
 })
 
