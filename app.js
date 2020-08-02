@@ -24,6 +24,7 @@ app.use((request, response, next) => {
 
 // 加载接口；
 app.use('/hero', require('./router/heroManage.js'))
+app.use('/hero', require('./router/login.js'))
 
 // 启动服务；
 app.listen(3000, (err) => {
