@@ -1,6 +1,19 @@
 const express = require('express')
 const connection = require('../utils/mysql')
 const router = express.Router()
+
+const createHeroTable = `
+CREATE TABLE IF NOT EXISTS heros(
+  Id INT auto_increment PRIMARY KEY,
+  images VARCHAR(255),
+  nickName VARCHAR(255),
+  userName VARCHAR(255),
+  date VARCHAR(255),
+  intro VARCHAR(255)
+)`
+
+// 创建hero表
+connection.query(createHeroTable)
 // 文件上传
 const multer = require('multer')
 const baseUrl = process.env.NODE_ENV === 'production' ? 'http://47.114.139.71:3000/' : 'http://localhost:3000/'
