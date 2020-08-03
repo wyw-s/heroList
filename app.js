@@ -26,6 +26,12 @@ app.use((request, response, next) => {
 app.use('/hero', require('./router/heroManage.js'))
 app.use('/user', require('./router/login.js'))
 
+// 统一处理错误
+app.use((err, req, res, next) => {
+  console.log('serveError:', err)
+  next()
+})
+
 // 启动服务；
 app.listen(3000, (err) => {
   if (!err) {

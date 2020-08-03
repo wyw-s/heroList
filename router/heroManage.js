@@ -35,7 +35,7 @@ const upload = multer({ storage: storage })
  * 设计路由；
  */
 // 查询英雄列表
-router.get('/getlist', (request, response) => {
+router.get('/getlist', (request, response, next) => {
   // 'SELECT * FROM heros' 查询表 heros的全部内容
   // 'SELECT * FROM heros ORDER BY Id asc/desc' 正序/倒序查询
   connection.query('SELECT * FROM heros ORDER BY Id desc', function(err, rows) {
@@ -51,6 +51,7 @@ router.get('/getlist', (request, response) => {
         success: false,
         message: '获取数据失败'
       })
+      next(err)
     }
   });
 })
@@ -70,7 +71,7 @@ router.get('/detail', (request, response) => {
 })
 
 // 新增英雄；
-router.post('/add', upload.single('images'), (request, response) => {
+router.post('/add', upload.single('images'), (request, response, next) => {
   let params;
   if (request.file) {
     params = {
@@ -94,12 +95,13 @@ router.post('/add', upload.single('images'), (request, response) => {
         success: false,
         message: '新增英雄失败'
       })
+      next(err)
     }
   });
 })
 
 // 删除英雄；
-router.delete('/delete', (request, response) => {
+router.delete('/delete', (request, response, next) => {
   // 根据id删除某一条数据；
   const sql = "DELETE FROM heros WHERE id = ?";
   connection.query(sql, request.body.id, function(err) {
@@ -115,12 +117,13 @@ router.delete('/delete', (request, response) => {
         success: false,
         message: '删除失败'
       })
+      next(err)
     }
   });
 })
 
 // 编辑英雄；
-router.put('/updata',upload.single('img'), (request, response) => {
+router.put('/updata',upload.single('img'), (request, response, next) => {
   if (request.file) {
     request.body.img = request.file.filename
   }
@@ -145,6 +148,7 @@ router.put('/updata',upload.single('img'), (request, response) => {
         success: false,
         message: '编辑失败'
       })
+      next(err)
     }
   });
 })
