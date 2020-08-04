@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS heros(
 )`
 
 // 创建hero表
-connection.query(createHeroTable)
+connection().query(createHeroTable)
 // 文件上传
 const multer = require('multer')
 const baseUrl = process.env.NODE_ENV === 'production' ? 'http://47.114.139.71:3000/' : 'http://localhost:3000/'
@@ -38,7 +38,7 @@ const upload = multer({ storage: storage })
 router.get('/getlist', (request, response, next) => {
   // 'SELECT * FROM heros' 查询表 heros的全部内容
   // 'SELECT * FROM heros ORDER BY Id asc/desc' 正序/倒序查询
-  connection.query('SELECT * FROM heros ORDER BY Id desc', function(err, rows) {
+  connection().query('SELECT * FROM heros ORDER BY Id desc', function(err, rows) {
     if (!err) {
       response.send({
         code: 200,
@@ -60,7 +60,7 @@ router.get('/getlist', (request, response, next) => {
 router.get('/detail', (request, response) => {
   // 'select id from heros where id' 查询表中某个字段的全部内容。
   // 'select * from heros where id = ' 根据id 进行精确查询。
-  connection.query('select * from heros where id = ?',request.query.id, function(err, rows) {
+  connection().query('select * from heros where id = ?',request.query.id, function(err, rows) {
     if (err) throw err
     response.send({
       code: 200,
@@ -82,7 +82,7 @@ router.post('/add', upload.single('images'), (request, response, next) => {
   }
   // 向表中插入一条数据；
   const sql = "INSERT INTO heros set ?";
-  connection.query(sql, params, function(err) {
+  connection().query(sql, params, function(err) {
     if (!err) {
       response.send({
         success: true,
@@ -104,7 +104,7 @@ router.post('/add', upload.single('images'), (request, response, next) => {
 router.delete('/delete', (request, response, next) => {
   // 根据id删除某一条数据；
   const sql = "DELETE FROM heros WHERE id = ?";
-  connection.query(sql, request.body.id, function(err) {
+  connection().query(sql, request.body.id, function(err) {
     if (!err) {
       response.send({
         success: true,

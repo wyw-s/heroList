@@ -10,17 +10,17 @@ CREATE TABLE IF NOT EXISTS users(
 )`
 
 // 创建用户表
-connection.query(createUserTable)
+connection().query(createUserTable)
 
 // 用户注册；
 router.post('/register', (request, response) => {
   const { username } = request.body
   // 查询是否已被注册；
-  connection.query('SELECT * FROM users WHERE username = ?', username, (error, results) => {
+  connection().query('SELECT * FROM users WHERE username = ?', username, (error, results) => {
     if (!error) {
       if (!results.length) {
         // 注册；
-        connection.query('INSERT INTO users SET ?', request.body, (error) => {
+        connection().query('INSERT INTO users SET ?', request.body, (error) => {
           if (!error) {
             response.send({
               code: 200,
