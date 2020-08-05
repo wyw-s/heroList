@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS users(
 )`
 
 // 创建用户表
-connection().query(createUserTable)
+connection(createUserTable)
 
 // 用户注册；
 router.post('/register', (request, response) => {
