@@ -1,5 +1,7 @@
 const express = require('express')
 const connection = require('../utils/mysql')
+const svgCaptcha = require('svg-captcha');
+
 const router = express.Router()
 
 const createUserTable = `
@@ -55,8 +57,9 @@ router.post('/register', (request, response, next) => {
 })
 
 // 用户登录;
+let captchaText = ''
 router.post('/login', (request, response, next) => {
-  const { username, password } = request.body
+  const { username, password, captcha } = request.body
   // 查找用户;
   connection('SELECT * FROM users WHERE username = ?',username, (error, results) => {
     if (error) {
@@ -68,20 +71,28 @@ router.post('/login', (request, response, next) => {
       next(error)
     } else {
       if (results.length) {
-        if (results[0].password === password) {
-          response.send({
-            code: 200,
-            success: true,
-            message: '登录成功',
-            data: {
-              accessToken: results
-            }
-          })
+        if (captcha === captchaText ) {
+          if (results[0].password === password) {
+            response.send({
+              code: 200,
+              success: true,
+              message: '登录成功',
+              data: {
+                accessToken: results
+              }
+            })
+          } else {
+            response.send({
+              code: 402,
+              success: false,
+              message: '账号或密码错误，请重新登录'
+            })
+          }
         } else {
           response.send({
-            code: 200,
+            code: 402,
             success: false,
-            message: '账号或密码错误，请重新登录'
+            message: '验证码错误，请重新登录'
           })
         }
       } else {
@@ -94,5 +105,18 @@ router.post('/login', (request, response, next) => {
     }
   })
 })
+
+// 验证码；
+router.get('/captcha', function (request, response) {
+  const captcha = svgCaptcha.createMathExpr({
+    mathMin: -9,
+    mathMax: 9,
+    noise: 3,
+    color: true
+  })
+  captchaText = captcha.text;
+  response.type('svg');
+  response.send(captcha.data)
+});
 
 module.exports = router
