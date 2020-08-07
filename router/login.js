@@ -76,7 +76,7 @@ router.post('/login', (request, response, next) => {
             response.send({
               code: 200,
               success: true,
-              message: '登录成功',
+              message: '恭喜你！登录成功',
               data: {
                 accessToken: results
               }
@@ -99,7 +99,7 @@ router.post('/login', (request, response, next) => {
         response.send({
           code: 400,
           success: false,
-          message: '请先进行注册！',
+          message: '该账号未注册，请先进行注册！',
         })
       }
     }
