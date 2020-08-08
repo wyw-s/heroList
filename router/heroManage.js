@@ -1,4 +1,5 @@
 const express = require('express')
+const moment = require('moment')
 const connection = require('../utils/mysql')
 const router = express.Router()
 
@@ -76,7 +77,7 @@ router.post('/add', upload.single('images'), (request, response, next) => {
   if (request.file) {
     params = {
       images: baseUrl + request.file.filename,
-      date: new Date().toLocaleString(),
+      date: moment(new Date()).format('YYYY-DD-MM HH:mm:ss'),
       ...request.body
     }
   }
