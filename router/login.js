@@ -1,6 +1,7 @@
 const express = require('express')
 const connection = require('../utils/mysql')
 const svgCaptcha = require('svg-captcha');
+const jwt = require('jsonwebtoken');
 
 const router = express.Router()
 
@@ -73,12 +74,13 @@ router.post('/login', (request, response, next) => {
       if (results.length) {
         if (captcha === captchaText ) {
           if (results[0].password === password) {
+            const token = jwt.sign({ userInfo: username }, 'token');
             response.send({
               code: 200,
               success: true,
               message: '恭喜你！登录成功',
               data: {
-                accessToken: results
+                SUCCESS_TOKEN: token
               }
             })
           } else {

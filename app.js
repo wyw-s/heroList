@@ -1,6 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-
+const jwt = require('jsonwebtoken');
 // 创建服务器；
 const app = express()
 
@@ -20,6 +20,20 @@ app.use((request, response, next) => {
   // 跨域服务器允许客户端添加或自定义哪些http 头。
   response.header('Access-Control-Allow-Methods', "POST, GET, PATCH, DELETE, PUT, OPTIONS")
   next()
+})
+
+// 统一登录认证;
+app.use('/hero/*', (request, response, next) => {
+  jwt.verify(request.headers.authorization, 'token', function(err) {
+    if (err) {
+      response.send({
+        code: 401,
+        message: '认证失败，请重新登录！'
+      })
+    } else {
+      next()
+    }
+  })
 })
 
 // 加载接口；
