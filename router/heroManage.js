@@ -77,7 +77,7 @@ router.post('/add', upload.single('images'), (request, response, next) => {
   if (request.file) {
     params = {
       images: baseUrl + request.file.filename,
-      date: moment(new Date()).format('YYYY-DD-MM HH:mm:ss'),
+      date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
       ...request.body
     }
   }
