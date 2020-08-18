@@ -1,6 +1,7 @@
 const express = require('express')
 const moment = require('moment')
 const connection = require('../utils/mysql')
+const fs = require('fs')
 const router = express.Router()
 
 const createHeroTable = `
@@ -17,7 +18,6 @@ CREATE TABLE IF NOT EXISTS heros(
 connection(createHeroTable)
 // 文件上传
 const multer = require('multer')
-const baseUrl = process.env.NODE_ENV === 'production' ? 'http://47.114.139.71:3000/' : 'http://localhost:3000/'
 // 自定义上传储存位置
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -76,7 +76,7 @@ router.post('/add', upload.single('images'), (request, response, next) => {
   let params;
   if (request.file) {
     params = {
-      images: baseUrl + request.file.filename,
+      images: request.file.filename,
       date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
       ...request.body
     }
@@ -104,13 +104,20 @@ router.post('/add', upload.single('images'), (request, response, next) => {
 // 删除英雄；
 router.delete('/delete', (request, response, next) => {
   // 根据id删除某一条数据；
+  const { id, images } = request.body
   const sql = "DELETE FROM heros WHERE id = ?";
-  connection(sql, request.body.id, function(err) {
+  connection(sql, id, function(err) {
     if (!err) {
       response.send({
         success: true,
         code: 200,
         message: '删除成功'
+      })
+      const index = __dirname.lastIndexOf('\\')
+      fs.unlink(`${__dirname.substr(0 ,index + 1)}uploads\\${images}`, function(err){
+        if(err){
+          next(err)
+        }
       })
     } else {
       response.send({
